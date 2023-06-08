@@ -14,7 +14,7 @@ public class GUI {
     public static int  frameWidth = 800;
     
 
-    public static void Frame(int [][] Scr) {
+    public static void Frame(int[][] Scr) {
         JFrame frame = new JFrame("Frame"); // main frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frameHeight, frameWidth);
@@ -26,7 +26,7 @@ public class GUI {
         frame.add(Screen);
     }
 
-    public static BufferedImage MatrixToImage(int [][] Matrix,int size_x,int size_y){
+    public static BufferedImage MatrixToImage(int[][] Matrix,int size_x,int size_y){
         try {
             BufferedImage image = new BufferedImage(size_x, size_y, BufferedImage.TYPE_INT_RGB);
             for(int i=0; i< size_x; i++) {
@@ -36,8 +36,6 @@ public class GUI {
                     image.setRGB(j, i, newColor.getRGB());
                 }
             }
-            File output = new File("GrayScale.jpg");
-            ImageIO.write(image, "jpg", output);
             return image;
         }
         catch(Exception e) {
