@@ -23,6 +23,7 @@ public class GUI {
         frame.setVisible(true);
 
         ImgPanel Screen = new ImgPanel(MatrixToImage(Scr, frameWidth, frameHeight), frameWidth, frameHeight);
+        Screen.setBounds(frameHeight, frameHeight, 0, 0);
         frame.add(Screen);
     }
 
