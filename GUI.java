@@ -13,18 +13,20 @@ public class GUI {
     public static int  frameHeight = 800; //frame setup
     public static int  frameWidth = 800;
     static ImgPanel Screen;
+    static JFrame frame;
 
     public static void Frame(int[][] Scr) {
-        JFrame frame = new JFrame("Frame"); // main frame
+        frame = new JFrame("Frame"); // main frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frameHeight, frameWidth);
+        frame.setResizable(false);
         frame.getContentPane().setBackground(Color.darkGray);;
         frame.setLocationRelativeTo(null); 
         frame.setVisible(true);
 
         Screen = new ImgPanel(MatrixToImage(Scr, frameWidth, frameHeight), frameWidth, frameHeight);
         Screen.setBounds(0, 0, frameWidth, frameHeight);
-        Screen.setBackground(Color.RED);
+        Screen.setBackground(Color.BLACK);
         frame.add(Screen);
     }
 
