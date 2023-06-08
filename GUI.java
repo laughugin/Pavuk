@@ -14,18 +14,21 @@ public class GUI {
     public static int  frameWidth = 800;
     
 
-    public static void Frame() {
+    public static void Frame(int [][] Scr) {
         JFrame frame = new JFrame("Frame"); // main frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frameHeight, frameWidth);
         frame.getContentPane().setBackground(Color.darkGray);;
         frame.setLocationRelativeTo(null); 
         frame.setVisible(true);
+
+        ImgPanel Screen = new ImgPanel(MatrixToImage(Scr, frameWidth, frameHeight), frameWidth, frameHeight);
+        frame.add(Screen);
     }
 
     public static BufferedImage MatrixToImage(int [][] Matrix,int size_x,int size_y){
         try {
-            BufferedImage image;
+            BufferedImage image = new BufferedImage(size_x, size_y, BufferedImage.TYPE_INT_RGB);
             for(int i=0; i< size_x; i++) {
                 for(int j = 0; j < size_y; j++) {
                     int a = Matrix[i][j];

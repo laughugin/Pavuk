@@ -11,14 +11,11 @@ public class ImgPanel extends JPanel{
     int w;
     int h;
 
-    public ImgPanel(String path, int width, int height) {
-        try {                
-            image = ImageIO.read(new File(path));
-            w = width;
-            h = height;
-         } catch (IOException ex) {
-              // handle exception...
-         }
+    public ImgPanel(BufferedImage img, int width, int height) {
+                       
+        image = img;
+        w = width;
+        h = height;
     }
 
     @Override
