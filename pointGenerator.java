@@ -15,14 +15,13 @@ public class PointGenerator {
     public int[][] generatePoints() {
         Random random = new Random();
 
-        int numberToFill = 1;
+        int numberToFill = 255; // color of the point (filled point)
 
         for (int i = 0; i < numberOfPoints; i++) {
             int x = random.nextInt(frameWidth);
             int y = random.nextInt(frameHeight);
 
             frameMatrix[x][y] = numberToFill;
-            numberToFill++;
         }
         return frameMatrix;
     }
