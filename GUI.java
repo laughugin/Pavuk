@@ -42,6 +42,16 @@ public class GUI {
                 int a = Matrix[i][j];
                 Color newColor = new Color(a,a,a);
                 image.setRGB(j, i, newColor.getRGB());
+                /* 
+                image.setRGB(j+1, i, newColor.getRGB());
+                image.setRGB(j-1, i, newColor.getRGB());
+                image.setRGB(j, i+1, newColor.getRGB());
+                image.setRGB(j, i-1, newColor.getRGB());
+                image.setRGB(j+1, i+1, newColor.getRGB());
+                image.setRGB(j-1, i-1, newColor.getRGB());
+                image.setRGB(j-1, i+1, newColor.getRGB());
+                image.setRGB(j+1, i-1, newColor.getRGB());
+                 */
             }
         }
         return image;
