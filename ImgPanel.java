@@ -24,13 +24,10 @@ public class ImgPanel extends JPanel{
         g.drawImage(image, 0, 0, w, h, this); // see javadoc for more info on the parameters            
     }
 
-    public void changeImage(String path){
-        try {                
-            image = ImageIO.read(new File(path));
-            paintComponent(getGraphics());
-         } catch (IOException ex) {
-              // handle exception...
-         }
+    public void changeImage(BufferedImage img){
+                     
+        image = img;
+        paintComponent(getGraphics());
     }
 
 }
