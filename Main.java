@@ -6,6 +6,6 @@ public class Main {
         GUI gui = new GUI();
         gui.Frame();
         frameMatrix = new int[gui.frameWidth][gui.frameHeight];
-        pointGenerator gen1 = new pointGenerator(numberOfPoints, frameMatrix);
+        PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight);
     }
 }
