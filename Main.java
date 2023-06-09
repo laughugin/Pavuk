@@ -3,13 +3,12 @@ import java.awt.Point;
 
 public class Main {
     public static int[][] frameMatrix; // matrix of the frame
-<<<<<<< HEAD
-    public static int numberOfPoints = 190; // num of generated points
-    public static int CursorPosX = 0;
-=======
+    public static int[][] dotsMatrix; // matrix of the dots
+    public static int[][] spiderMatrix; // matrix of the spider
+    public static int[][] legsMatrix; // matrix of the legs
+    public static int[][] emptyMatrix; // matrix of the legs
     public static int numberOfPoints = 100; // num of generated points
     public static int CursorPosX = 0; 
->>>>>>> 822c1a8900762c8bc3ad033c5140462e14539f91
     public static int CursorPosY = 0;
     private static int spiderX = 0;
     private static int spiderY = 0;
@@ -19,7 +18,7 @@ public class Main {
     private static final int SPIDER_HEIGHT2 = 15;
     public static final int POINT_COLOR = 255;
     public static final int SPIDER_COLOR = 150;
-    public static final int PATH_COLOR = 100;
+    public static final int PATH_COLOR = 255;
     public static final int SPIDER_PATH_COLOR = 50;
     
     
@@ -27,31 +26,53 @@ public class Main {
         GUI gui = new GUI(); // run gui
         spiderX = gui.frameWidth/2; // first center position of the spider
         spiderY = gui.frameHeight/2; 
-        frameMatrix = Matrix.Fill(0, gui.frameWidth, gui.frameHeight); // fill the matrix
+        emptyMatrix = Matrix.Fill(0, gui.frameWidth, gui.frameHeight);
+        frameMatrix = emptyMatrix;
+        dotsMatrix = emptyMatrix;
+        spiderMatrix = emptyMatrix;
+        legsMatrix = emptyMatrix; // fill the matrix
         gui.Frame(frameMatrix);
-        frameMatrix = new int[gui.frameWidth][gui.frameHeight];
+        dotsMatrix = new int[gui.frameWidth][gui.frameHeight];
         PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight); // generate inital points 
-        frameMatrix = gen1.generatePoints();
-<<<<<<< HEAD
-        frameMatrix = gui.MakeGlow(frameMatrix, 800, 800, 9, 60);
-        gui.Refresh(frameMatrix);
-=======
+        dotsMatrix = gen1.generatePoints();
+        int[][] dotsMatrixBuff = dotsMatrix;
         
-        
->>>>>>> 822c1a8900762c8bc3ad033c5140462e14539f91
 
         // Read cursor position
         while (true) {
+            emptyMatrix = Matrix.Fill(0, gui.frameWidth, gui.frameHeight);
+            frameMatrix = emptyMatrix;
+            spiderMatrix = emptyMatrix;
+            legsMatrix = emptyMatrix;
+            dotsMatrixBuff = dotsMatrix; 
 
-            fillRectangle(frameMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
-            fillRectangle(frameMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
+            spiderMatrix[spiderY][spiderX] = 255;
+            spiderMatrix = gui.MakeGlow(spiderMatrix, 800, 800, 17, 100);
+
+            fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
+            fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
             for (int i = 0; i < gui.frameWidth; i++){
                 for (int j = 0; j < gui.frameHeight; j++){
-                    if(frameMatrix[i][j] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
-                        fillBetweenPoints(frameMatrix, spiderX, spiderY, i, j);
+                    if(dotsMatrix[j][i] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
+                        fillBetweenPoints(legsMatrix, spiderX, spiderY, i, j);
                     }
                 }
 
+            }
+
+            dotsMatrixBuff = gui.MakeGlow(dotsMatrixBuff, 800, 800, 9, 60);
+            //legsMatrix = gui.MakeGlow(legsMatrix, 800, 800, 1, 9);
+
+            for (int i = 0; i < gui.frameWidth; i++){
+                for (int j = 0; j < gui.frameHeight; j++){
+                    frameMatrix[i][j] = dotsMatrixBuff[i][j] + spiderMatrix[i][j] + legsMatrix[i][j];
+                    if(frameMatrix[i][j] > 255){
+                        frameMatrix[i][j] = 255;
+                    }
+                    else if(frameMatrix[i][j] < 0){
+                        frameMatrix[i][j] = 0;
+                    }
+                }
             }
             // Get the cursor position relative to the screen
             Point cursorPos = MouseInfo.getPointerInfo().getLocation();
@@ -106,8 +127,8 @@ public class Main {
 
 
             gui.Refresh(frameMatrix);
-            deletePreviousPath(frameMatrix);
-            deletePreviousSpider(frameMatrix);
+            //deletePreviousPath(frameMatrix);
+            //deletePreviousSpider(frameMatrix);
         }
     }
 
