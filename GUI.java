@@ -1,6 +1,7 @@
 import java.awt.Color;
 
 import javax.swing.*;
+import java.lang.Math;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,18 +43,42 @@ public class GUI {
                 int a = Matrix[i][j];
                 Color newColor = new Color(a,a,a);
                 image.setRGB(j, i, newColor.getRGB());
-                /* 
-                image.setRGB(j+1, i, newColor.getRGB());
-                image.setRGB(j-1, i, newColor.getRGB());
-                image.setRGB(j, i+1, newColor.getRGB());
-                image.setRGB(j, i-1, newColor.getRGB());
-                image.setRGB(j+1, i+1, newColor.getRGB());
-                image.setRGB(j-1, i-1, newColor.getRGB());
-                image.setRGB(j-1, i+1, newColor.getRGB());
-                image.setRGB(j+1, i-1, newColor.getRGB());
-                 */
             }
         }
         return image;
     } 
+
+    public static int[][] MakeGlow(int[][] Matrix,int size_x,int size_y, int coefficient, int deepness) {
+        int[][] MatrixBuff = new int[size_x][size_y];
+        double r, p;
+        for(int i=0; i< size_x; i++) {
+            for(int j = 0; j < size_y; j++) {
+                int a = Matrix[i][j];
+                if(a == 255){
+                    for(int in= i - deepness; in < i + deepness; in++) {
+                        for(int jn = j - deepness; jn < j + deepness; jn++) {
+                            r = Math.sqrt(Math.pow(Math.abs(in - i) , 2) + Math.pow(Math.abs(jn - j), 2));
+                            p = -(r/coefficient) + 1;
+                            try {
+                                MatrixBuff[in][jn] = (int) (MatrixBuff[in][jn] + Math.round(94.096*Math.pow(Math.E, p)));
+                            } catch (Exception e) {
+                                // TODO: handle exception
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+        for(int i=0; i< size_x; i++) {
+            for(int j = 0; j < size_y; j++) {
+                if(MatrixBuff[i][j] > 255){
+                    MatrixBuff[i][j] = 255;
+                }
+                else if(MatrixBuff[i][j] < 0){
+                    MatrixBuff[i][j] = 0;
+                }
+            }
+        }
+        return MatrixBuff;
+    }
 }

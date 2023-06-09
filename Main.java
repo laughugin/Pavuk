@@ -3,7 +3,7 @@ import java.awt.Point;
 
 public class Main {
     public static int[][] frameMatrix; // matrix of the frame
-    public static int numberOfPoints = 50000; // num of generated points
+    public static int numberOfPoints = 190; // num of generated points
     public static int CursorPosX = 0;
     public static int CursorPosY = 0;
 
@@ -14,6 +14,7 @@ public class Main {
         frameMatrix = new int[gui.frameWidth][gui.frameHeight];
         PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight);
         frameMatrix = gen1.generatePoints();
+        frameMatrix = gui.MakeGlow(frameMatrix, 800, 800, 9, 60);
         gui.Refresh(frameMatrix);
 
         // Read cursor position
