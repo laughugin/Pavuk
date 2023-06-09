@@ -7,12 +7,19 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 
-public class GUI {
+
+public class GUI extends JPanel{
     public static int  frameHeight = 800; //frame setup
     public static int  frameWidth = 800;
+
+
+
+
     static ImgPanel Screen;
     static JFrame frame;
 
@@ -30,6 +37,8 @@ public class GUI {
         Screen.setBackground(Color.BLACK);
         frame.add(Screen);
     }
+
+
 
     public static void Refresh(int[][] Scr){
         Screen.changeImage(MatrixToImage(Scr, frameWidth, frameHeight));
