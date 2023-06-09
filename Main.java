@@ -3,13 +3,8 @@ import java.awt.Point;
 
 public class Main {
     public static int[][] frameMatrix; // matrix of the frame
-<<<<<<< HEAD
-    public static int numberOfPoints = 190; // num of generated points
-    public static int CursorPosX = 0;
-=======
     public static int numberOfPoints = 100; // num of generated points
-    public static int CursorPosX = 0; 
->>>>>>> 822c1a8900762c8bc3ad033c5140462e14539f91
+    public static int CursorPosX = 0;
     public static int CursorPosY = 0;
     private static int spiderX = 0;
     private static int spiderY = 0;
@@ -32,13 +27,10 @@ public class Main {
         frameMatrix = new int[gui.frameWidth][gui.frameHeight];
         PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight); // generate inital points 
         frameMatrix = gen1.generatePoints();
-<<<<<<< HEAD
-        frameMatrix = gui.MakeGlow(frameMatrix, 800, 800, 9, 60);
+        frameMatrix = gui.MakeGlow(frameMatrix, 800, 800, 2, 60);
         gui.Refresh(frameMatrix);
-=======
         
         
->>>>>>> 822c1a8900762c8bc3ad033c5140462e14539f91
 
         // Read cursor position
         while (true) {
@@ -47,8 +39,8 @@ public class Main {
             fillRectangle(frameMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
             for (int i = 0; i < gui.frameWidth; i++){
                 for (int j = 0; j < gui.frameHeight; j++){
-                    if(frameMatrix[i][j] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
-                        fillBetweenPoints(frameMatrix, spiderX, spiderY, i, j);
+                    if(frameMatrix[j][i] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
+                        fillBetweenPoints(frameMatrix, spiderX, spiderY, i, j, gui);
                     }
                 }
 
@@ -84,7 +76,7 @@ public class Main {
             int dy = CursorPosY - spiderY;
                 
             // Define the speed at which the spider moves
-            int speed = 5; // Adjust as needed
+            int speed = 10; // Adjust as needed
                 
             // Calculate the total distance
             double distance = Math.sqrt(dx * dx + dy * dy);
@@ -111,32 +103,40 @@ public class Main {
         }
     }
 
-    static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, int endY) { //!!!!!!!!! make it work
-        int dx = Math.abs(endX - startX);
-        int dy = Math.abs(endY - startY);
-        int sx = startX < endX ? 1 : -1;
-        int sy = startY < endY ? 1 : -1;
-        int err = dx - dy;
-        
+static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, int endY, GUI gui) {
+    int dx = Math.abs(endX - startX);
+    int dy = Math.abs(endY - startY);
+    int sx = startX < endX ? 1 : -1;
+    int sy = startY < endY ? 1 : -1;
+    int err = dx - dy;
+
+    int spiderToPointDistance = (int) Math.sqrt(dx * dx + dy * dy); // Distance from spider to the current point
+
+    if (spiderToPointDistance <= 100) { // Check if the distance is within the desired range
         while (startX != endX || startY != endY) {
             if (matrix[startY][startX] != POINT_COLOR) {
                 matrix[startY][startX] = PATH_COLOR;
             }
-        
+
             int err2 = 2 * err;
-        
+
             if (err2 > -dy) {
                 err -= dy;
                 startX += sx;
-            } else if (err2 < dx) {
+            }
+            if (err2 < dx) {
                 err += dx;
                 startY += sy;
             }
         }
-    
-        matrix[endY][endX] = PATH_COLOR;
+        gui.Refresh(frameMatrix);
+        if (matrix[endY][endX] != POINT_COLOR) {
+            matrix[endY][endX] = PATH_COLOR;
+        }
+        
+        
     }
-
+}
     
     public static void fillRectangle(int[][] matrix, int x, int y, int width, int height) {
         for (int i = y - height/2; i < y + height/2; i++) {
