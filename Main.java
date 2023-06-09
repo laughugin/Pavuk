@@ -7,7 +7,8 @@ public class Main {
     public static int[][] spiderMatrix; // matrix of the spider
     public static int[][] legsMatrix; // matrix of the legs
     public static int[][] emptyMatrix; // matrix of the legs
-    public static int numberOfPoints = 100; // num of generated points
+    public static Leg[] legs;
+    public static int numberOfPoints = 250; // num of generated points
     public static int CursorPosX = 0;
     public static int CursorPosY = 0;
     private static int spiderX = 0;
@@ -36,6 +37,15 @@ public class Main {
         PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight); // generate inital points 
         dotsMatrix = gen1.generatePoints();
         int[][] dotsMatrixBuff = dotsMatrix;
+        int taken = 0;
+        int NumberOfLegs = 8;
+        legs = new Leg[NumberOfLegs];
+
+        for(int i = 0; i < NumberOfLegs; i++){
+            legs[i] = new Leg();
+            legs[i].X = spiderX;
+            legs[i].Y = spiderY;
+        }
         
         
 
@@ -47,11 +57,55 @@ public class Main {
             legsMatrix = emptyMatrix;
             dotsMatrixBuff = dotsMatrix; 
 
+            // Get the cursor position relative to the screen
+            Point cursorPos = MouseInfo.getPointerInfo().getLocation();
+
+            // Calculate the cursor position relative to the frame
+            Point framePos = gui.frame.getLocationOnScreen();
+            int cursorRelativeX = cursorPos.x - framePos.x;
+            int cursorRelativeY = cursorPos.y - framePos.y;
+
             spiderMatrix[spiderY][spiderX] = 255;
             spiderMatrix = gui.MakeGlow(spiderMatrix, 800, 800, 17, 100);
 
             fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
             fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
+
+            for (int i = spiderY - 150; i < spiderY + 150; i++){
+                for (int j = spiderX - 150; j < spiderX + 150; j++){
+                    if(dotsMatrix[i][j] == 255 && (Math.sqrt(Math.pow(Math.abs(spiderY - i) , 2) + Math.pow(Math.abs(spiderX - j), 2)) < 100 || Math.sqrt(Math.pow(Math.abs(cursorRelativeY - i) , 2) + Math.pow(Math.abs(cursorRelativeX - j), 2)) < 50 )){
+                        for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
+                            if(legs[ActiveLeg].targetX == j && legs[ActiveLeg].targetY == i){
+                                taken = 1;
+                            }
+                        }
+                        if(taken == 0){
+                            for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
+                                if(Math.sqrt(Math.pow(Math.abs(spiderY - legs[ActiveLeg].Y) , 2) + Math.pow(Math.abs(spiderX - legs[ActiveLeg].X), 2)) > 100 || legs[ActiveLeg].free){
+                                    legs[ActiveLeg].SetTarget(j, i);
+                                    legs[ActiveLeg].free = false;
+                                    break;
+                                }
+                            }
+                        }
+                        taken = 0;
+                    }
+                }
+            }
+
+            for(int i = 0; i < NumberOfLegs; i++){
+                legs[i].Move();
+                fillBetweenPoints(legsMatrix, spiderX, spiderY, legs[i].X, legs[i].Y, gui);
+            }
+
+            for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
+                if(Math.sqrt(Math.pow(Math.abs(spiderY - legs[ActiveLeg].Y) , 2) + Math.pow(Math.abs(spiderX - legs[ActiveLeg].X), 2)) > 150 || legs[ActiveLeg].free){
+                    legs[ActiveLeg].SetTarget(spiderX, spiderY);
+                    legs[ActiveLeg].free = true;
+                }
+            }
+
+            /*
             for (int i = 0; i < gui.frameWidth; i++){
                 for (int j = 0; j < gui.frameHeight; j++){
                     if(dotsMatrix[j][i] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
@@ -60,9 +114,9 @@ public class Main {
                 }
 
             }
-
-            dotsMatrixBuff = gui.MakeGlow(dotsMatrixBuff, 800, 800, 9, 60);
-            //legsMatrix = gui.MakeGlow(legsMatrix, 800, 800, 1, 9);
+            */
+            dotsMatrixBuff = gui.MakeGlow(dotsMatrixBuff, 800, 800, 3, 30);
+            //legsMatrix = gui.MakeGlow(legsMatrix, 800, 800, 1, 20);
 
             for (int i = 0; i < gui.frameWidth; i++){
                 for (int j = 0; j < gui.frameHeight; j++){
@@ -75,13 +129,7 @@ public class Main {
                     }
                 }
             }
-            // Get the cursor position relative to the screen
-            Point cursorPos = MouseInfo.getPointerInfo().getLocation();
-
-            // Calculate the cursor position relative to the frame
-            Point framePos = gui.frame.getLocationOnScreen();
-            int cursorRelativeX = cursorPos.x - framePos.x;
-            int cursorRelativeY = cursorPos.y - framePos.y;
+            
 
             if ((cursorRelativeX >= 0 && cursorRelativeX <= gui.frameWidth) && (cursorRelativeY >= 0 && cursorRelativeY <= gui.frameHeight)) {
                 // Update the cursor position variables
@@ -105,11 +153,32 @@ public class Main {
             int dx = CursorPosX - spiderX;
             int dy = CursorPosY - spiderY;
                 
-            // Define the speed at which the spider moves
-            int speed = 10; // Adjust as needed
+            
                 
             // Calculate the total distance
             double distance = Math.sqrt(dx * dx + dy * dy);
+            // Define the speed at which the spider moves
+
+            int speed;
+            
+            if(distance > 100){
+                speed = 5;
+            }
+            else if(distance > 20 && 100 >= distance){
+                speed = 4;
+            }
+            else if(distance > 10 && 20 >= distance){
+                speed = 3;
+            }
+            else if(distance > 4 && 10 >= distance){
+                speed = 2;
+            }
+            else if(distance > 1 && 4 >= distance){
+                speed = 1;
+            }
+            else {
+                speed = 0;
+            }
                 
             // Calculate the normalized direction vector
             double directionX = dx / distance;
@@ -142,7 +211,7 @@ static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, 
 
     int spiderToPointDistance = (int) Math.sqrt(dx * dx + dy * dy); // Distance from spider to the current point
 
-    if (spiderToPointDistance <= 100) { // Check if the distance is within the desired range
+    //if (spiderToPointDistance <= 100) { // Check if the distance is within the desired range
         while (startX != endX || startY != endY) {
             if (matrix[startY][startX] != POINT_COLOR) {
                 matrix[startY][startX] = PATH_COLOR;
@@ -165,7 +234,7 @@ static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, 
         }
         
         
-    }
+    //}
 }
     
     public static void fillRectangle(int[][] matrix, int x, int y, int width, int height) {
