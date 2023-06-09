@@ -3,17 +3,12 @@ import java.awt.Point;
 
 public class Main {
     public static int[][] frameMatrix; // matrix of the frame
-<<<<<<< HEAD
     public static int[][] dotsMatrix; // matrix of the dots
     public static int[][] spiderMatrix; // matrix of the spider
     public static int[][] legsMatrix; // matrix of the legs
     public static int[][] emptyMatrix; // matrix of the legs
     public static int numberOfPoints = 100; // num of generated points
-    public static int CursorPosX = 0; 
-=======
-    public static int numberOfPoints = 100; // num of generated points
     public static int CursorPosX = 0;
->>>>>>> d2fbee82d2946262b6223662c0bde8459b9df120
     public static int CursorPosY = 0;
     private static int spiderX = 0;
     private static int spiderY = 0;
@@ -22,7 +17,7 @@ public class Main {
     private static final int SPIDER_WIDTH2 = 9;
     private static final int SPIDER_HEIGHT2 = 15;
     public static final int POINT_COLOR = 255;
-    public static final int SPIDER_COLOR = 150;
+    public static final int SPIDER_COLOR = 255;
     public static final int PATH_COLOR = 255;
     public static final int SPIDER_PATH_COLOR = 50;
     
@@ -39,17 +34,10 @@ public class Main {
         gui.Frame(frameMatrix);
         dotsMatrix = new int[gui.frameWidth][gui.frameHeight];
         PointGenerator gen1 = new PointGenerator(numberOfPoints, frameMatrix, gui.frameWidth, gui.frameHeight); // generate inital points 
-<<<<<<< HEAD
         dotsMatrix = gen1.generatePoints();
         int[][] dotsMatrixBuff = dotsMatrix;
         
-=======
-        frameMatrix = gen1.generatePoints();
-        frameMatrix = gui.MakeGlow(frameMatrix, 800, 800, 2, 60);
-        gui.Refresh(frameMatrix);
         
-        
->>>>>>> d2fbee82d2946262b6223662c0bde8459b9df120
 
         // Read cursor position
         while (true) {
@@ -66,13 +54,8 @@ public class Main {
             fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
             for (int i = 0; i < gui.frameWidth; i++){
                 for (int j = 0; j < gui.frameHeight; j++){
-<<<<<<< HEAD
                     if(dotsMatrix[j][i] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
-                        fillBetweenPoints(legsMatrix, spiderX, spiderY, i, j);
-=======
-                    if(frameMatrix[j][i] == POINT_COLOR){  // if the cell is 255 (so it's white meaning belongs to spider or point) -> fill the line
-                        fillBetweenPoints(frameMatrix, spiderX, spiderY, i, j, gui);
->>>>>>> d2fbee82d2946262b6223662c0bde8459b9df120
+                        fillBetweenPoints(legsMatrix, spiderX, spiderY, i, j, gui);
                     }
                 }
 
@@ -176,7 +159,7 @@ static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, 
                 startY += sy;
             }
         }
-        gui.Refresh(frameMatrix);
+        
         if (matrix[endY][endX] != POINT_COLOR) {
             matrix[endY][endX] = PATH_COLOR;
         }
