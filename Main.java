@@ -39,6 +39,9 @@ public class Main {
         int[][] dotsMatrixBuff = dotsMatrix;
         int taken = 0;
         int NumberOfLegs = 8;
+        int speed = 0;
+        int timer = 0;
+        int DotsInRange[][] = Matrix.Fill(-1000, 3, 200);
         legs = new Leg[NumberOfLegs];
 
         for(int i = 0; i < NumberOfLegs; i++){
@@ -51,11 +54,13 @@ public class Main {
 
         // Read cursor position
         while (true) {
+            DotsInRange = Matrix.Fill(-1000, 3, 200);
             emptyMatrix = Matrix.Fill(0, gui.frameWidth, gui.frameHeight);
             frameMatrix = emptyMatrix;
             spiderMatrix = emptyMatrix;
             legsMatrix = emptyMatrix;
             dotsMatrixBuff = dotsMatrix; 
+            speed = 0;
 
             // Get the cursor position relative to the screen
             Point cursorPos = MouseInfo.getPointerInfo().getLocation();
@@ -71,19 +76,21 @@ public class Main {
             fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
             fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
 
-            for (int i = spiderY - 150; i < spiderY + 150; i++){
-                for (int j = spiderX - 150; j < spiderX + 150; j++){
-                    if(dotsMatrix[i][j] == 255 && (Math.sqrt(Math.pow(Math.abs(spiderY - i) , 2) + Math.pow(Math.abs(spiderX - j), 2)) < 100 || Math.sqrt(Math.pow(Math.abs(cursorRelativeY - i) , 2) + Math.pow(Math.abs(cursorRelativeX - j), 2)) < 50 )){
-                        for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
-                            if(legs[ActiveLeg].targetX == j && legs[ActiveLeg].targetY == i){
-                                taken = 1;
-                            }
-                        }
+            for (int i = spiderY - 100; i < spiderY + 100; i++){
+                for (int j = spiderX - 100; j < spiderX + 100; j++){
+                    if(dotsMatrix[i][j] == 255 && Math.sqrt(Math.pow(Math.abs(spiderY - i) , 2) + Math.pow(Math.abs(spiderX - j), 2)) < 100){
                         if(taken == 0){
-                            for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
-                                if(Math.sqrt(Math.pow(Math.abs(spiderY - legs[ActiveLeg].Y) , 2) + Math.pow(Math.abs(spiderX - legs[ActiveLeg].X), 2)) > 100 || legs[ActiveLeg].free){
-                                    legs[ActiveLeg].SetTarget(j, i);
-                                    legs[ActiveLeg].free = false;
+                            int value = (int) (100 - Math.abs(Math.sqrt(Math.pow(Math.abs(spiderY - i) , 2) + Math.pow(Math.abs(spiderX - j), 2)) - 50) - Math.sqrt(Math.pow(Math.abs(cursorRelativeY - i) , 2) + Math.pow(Math.abs(cursorRelativeX - j), 2)));
+                            for(int f = 0; f < 200; f++){
+                                if(value >= DotsInRange[0][f]){
+                                    for(int h = 199; h > f; h--){
+                                        DotsInRange[0][h] = DotsInRange[0][h-1];
+                                        DotsInRange[1][h] = DotsInRange[1][h-1];
+                                        DotsInRange[2][h] = DotsInRange[2][h-1];
+                                    }
+                                    DotsInRange[0][f] = value;
+                                    DotsInRange[1][f] = j;
+                                    DotsInRange[2][f] = i;
                                     break;
                                 }
                             }
@@ -93,13 +100,35 @@ public class Main {
                 }
             }
 
+            for (int i = 0; i < 200; i++){
+                for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
+                    for(int j = 0; j < NumberOfLegs; j++){
+                        if( legs[j].targetX == DotsInRange[1][i] && legs[j].targetY == DotsInRange[2][i]){
+                            taken = 1;
+                        }
+                    }
+                    if( legs[ActiveLeg].free && DotsInRange[0][i] != -1000 && taken == 0){
+                        legs[ActiveLeg].SetTarget(DotsInRange[1][i], DotsInRange[2][i]);
+                        legs[ActiveLeg].free = false;
+                        break;
+                    }
+                    if(ActiveLeg == NumberOfLegs - 1 && !legs[ActiveLeg].free){
+                        i = 200;
+                    }
+                }
+            }
+
             for(int i = 0; i < NumberOfLegs; i++){
                 legs[i].Move();
-                fillBetweenPoints(legsMatrix, spiderX, spiderY, legs[i].X, legs[i].Y, gui);
+                if(legs[i].locked && !legs[i].free){
+                    speed++;
+                }
+                //fillBetweenPoints(legsMatrix, spiderX, spiderY, legs[i].X, legs[i].Y, gui);
+                drawTin(legsMatrix, spiderX, spiderY, legs[i].X, legs[i].Y);
             }
 
             for(int ActiveLeg = 0; ActiveLeg < NumberOfLegs; ActiveLeg++){
-                if(Math.sqrt(Math.pow(Math.abs(spiderY - legs[ActiveLeg].Y) , 2) + Math.pow(Math.abs(spiderX - legs[ActiveLeg].X), 2)) > 150 || legs[ActiveLeg].free){
+                if(Math.sqrt(Math.pow(Math.abs(spiderY - legs[ActiveLeg].Y) , 2) + Math.pow(Math.abs(spiderX - legs[ActiveLeg].X), 2)) > 100 || legs[ActiveLeg].free){
                     legs[ActiveLeg].SetTarget(spiderX, spiderY);
                     legs[ActiveLeg].free = true;
                 }
@@ -115,7 +144,8 @@ public class Main {
 
             }
             */
-            dotsMatrixBuff = gui.MakeGlow(dotsMatrixBuff, 800, 800, 3, 30);
+            dotsMatrixBuff = gui.MakeGlow(dotsMatrixBuff, 800, 800, 2, 30);
+            
             //legsMatrix = gui.MakeGlow(legsMatrix, 800, 800, 1, 20);
 
             for (int i = 0; i < gui.frameWidth; i++){
@@ -143,7 +173,7 @@ public class Main {
 
             // Print the cursor position
             
-            System.out.println("Cursor:\nx = " + CursorPosX + "\ny = " + CursorPosY);
+            System.out.println("Cursor:\nx = " + CursorPosX + "\ny = " + CursorPosY  + "\nspd = " + speed);
 
             try {
                 Thread.sleep(100); // Delay between each cursor position read
@@ -158,25 +188,17 @@ public class Main {
             // Calculate the total distance
             double distance = Math.sqrt(dx * dx + dy * dy);
             // Define the speed at which the spider moves
-
-            int speed;
             
-            if(distance > 100){
-                speed = 5;
-            }
-            else if(distance > 20 && 100 >= distance){
-                speed = 4;
+            if(distance > 20 && 100 >= distance){
+                speed = speed/2;
             }
             else if(distance > 10 && 20 >= distance){
-                speed = 3;
+                speed = speed/3;
             }
             else if(distance > 4 && 10 >= distance){
-                speed = 2;
+                speed = speed/4;
             }
-            else if(distance > 1 && 4 >= distance){
-                speed = 1;
-            }
-            else {
+            else if(4 >= distance){
                 speed = 0;
             }
                 
@@ -199,8 +221,25 @@ public class Main {
             gui.Refresh(frameMatrix);
             //deletePreviousPath(frameMatrix);
             //deletePreviousSpider(frameMatrix);
+            timer++;
+            if(timer > 5){
+                timer = 0;
+            }
         }
     }
+static void drawTin(int[][] matrix, int startX, int startY, int endX, int endY){
+    double d = Math.sqrt(Math.pow(Math.abs(startX - endX) , 2) + Math.pow(Math.abs(startY - endY), 2));
+    double a = Math.atan2(endY - startY,endX - startX);
+    double x, y;
+    int xn, yn;
+    for(int i = 0; i < d*10; i++){
+        x = i/10;
+        y = 10*Math.sin((2*Math.PI*d)/100)*Math.sin((2*Math.PI*x)/d)*Math.sin((2*Math.PI*x)/50);
+        xn = (int) (x*Math.cos(a) - y*Math.sin(a));
+        yn = (int) (y*Math.cos(a) + x*Math.sin(a));
+        matrix[yn + startY][xn + startX] = 255;
+    }
+}
 
 static void fillBetweenPoints(int[][] matrix, int startX, int startY, int endX, int endY, GUI gui) {
     int dx = Math.abs(endX - startX);

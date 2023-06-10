@@ -8,26 +8,33 @@ public class Leg {
     int targetX = 0;
     int targetY = 0;
     Boolean free = true;
+    Boolean locked = false;
 
     public void Move() {
-        if ((targetX - X) <= speedX + 5){
+        if (Math.abs(targetX - X) <= Math.abs(speedX) + 5){
             X = targetX;
+            speedX = 0;
+            locked = true;
         }
         else{
             X = X + speedX;
+            locked = false;
         }
-        if ((targetY - Y) <= speedY + 5){
+        if (Math.abs(targetY - Y) <= Math.abs(speedY) + 5){
             Y = targetY;
+            speedY = 0;
+            locked = true;
         }
         else{
             Y = Y + speedY;
+            locked = false;
         }
     }
 
     public void SetTarget(int TargetX,int TargetY) {
         targetX = TargetX;
         targetY = TargetY;
-        speedX = (targetX - X)/3;
-        speedY = (targetY - Y)/3;
+        speedX = (targetX - X)/7;
+        speedY = (targetY - Y)/7;
     }
 }
