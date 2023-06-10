@@ -17,10 +17,12 @@ public class Main {
     private static final int SPIDER_HEIGHT = 11;
     private static final int SPIDER_WIDTH2 = 9;
     private static final int SPIDER_HEIGHT2 = 15;
+    private static final int SPIDER_RADIUS = 10;
     public static final int POINT_COLOR = 255;
     public static final int SPIDER_COLOR = 255;
     public static final int PATH_COLOR = 255;
     public static final int SPIDER_PATH_COLOR = 50;
+
     
     
     public static void main(String[] args) {
@@ -73,8 +75,9 @@ public class Main {
             spiderMatrix[spiderY][spiderX] = 255;
             spiderMatrix = gui.MakeGlow(spiderMatrix, 800, 800, 17, 100);
 
-            fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
-            fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
+            //fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH, SPIDER_HEIGHT); // fill the spider on the frame
+            //fillRectangle(spiderMatrix, spiderX, spiderY, SPIDER_WIDTH2, SPIDER_HEIGHT2);
+            fillSpider(spiderMatrix, spiderX, spiderY, SPIDER_RADIUS);
 
             for (int i = spiderY - 100; i < spiderY + 100; i++){
                 for (int j = spiderX - 100; j < spiderX + 100; j++){
@@ -227,6 +230,17 @@ public class Main {
             }
         }
     }
+
+static void fillSpider(int[][] matrix, int x, int y, int r){
+    for(int i = x - r; i < x + r; i++){
+        for(int j = y - r; j < y + r; j++){
+            if((Math.pow(i - x, 2) + Math.pow(j - y, 2)) < (Math.pow(r, 2))){
+                matrix[j][i] = SPIDER_COLOR;
+            }
+        }
+    }
+}
+
 static void drawTin(int[][] matrix, int startX, int startY, int endX, int endY){
     double d = Math.sqrt(Math.pow(Math.abs(startX - endX) , 2) + Math.pow(Math.abs(startY - endY), 2));
     double a = Math.atan2(endY - startY,endX - startX);
